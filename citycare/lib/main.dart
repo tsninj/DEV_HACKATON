@@ -1,28 +1,27 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import '../helpers/database_helper.dart'; 
 import 'video.dart';
+import 'savedentriesscreen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   final cameras = await availableCameras();
-
   final firstCamera = cameras.first;
 
   runApp(
     MaterialApp(
       theme: ThemeData.dark(),
       home: TakePictureScreen(camera: firstCamera),
+      debugShowCheckedModeBanner: false,
     ),
   );
 }
 
 class TakePictureScreen extends StatefulWidget {
   const TakePictureScreen({super.key, required this.camera});
-
   final CameraDescription camera;
 
   @override
@@ -32,7 +31,6 @@ class TakePictureScreen extends StatefulWidget {
 class TakePictureScreenState extends State<TakePictureScreen> {
   late CameraController _controller;
   late Future<void> _initializeControllerFuture;
-
   bool _isRecording = false;
 
   @override
@@ -71,9 +69,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                 onTap: () async {
                   try {
                     await _initializeControllerFuture;
-
                     final image = await _controller.takePicture();
-
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
@@ -93,10 +89,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
                   try {
                     await _initializeControllerFuture;
-                    final tempDir = Directory.systemTemp;
-                    final videoPath =
-                        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.mp4';
-
                     await _controller.startVideoRecording();
                   } catch (e) {
                     print("Error starting video recording: $e");
@@ -109,7 +101,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
 
                   try {
                     final video = await _controller.stopVideoRecording();
-
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
@@ -150,12 +141,30 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 }
 
-class DisplayPictureScreen extends StatelessWidget {
+class DisplayPictureScreen extends StatefulWidget {
+  final String imagePath;
+  const DisplayPictureScreen({super.key, required this.imagePath});
+
+  @override
+  State<DisplayPictureScreen> createState() => _DisplayPictureScreenState();
+}
+
+class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
   final TextEditingController mapController = TextEditingController();
   final TextEditingController captionController = TextEditingController();
-  final String imagePath;
 
-  DisplayPictureScreen({super.key, required this.imagePath});
+  List<bool> selectedTags = List.generate(8, (index) => false);
+
+  final List<String> tagNames = [
+    'Муу усны нүх',
+    'Үер ус',
+    'Гэрэл, цахилгаан',
+    'Зам',
+    'Хог хаягдал',
+    'Ногоон байгууламж',
+    'Барилга, байгууламж',
+    'Бусад',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -167,78 +176,168 @@ class DisplayPictureScreen extends StatelessWidget {
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10, left: 20),
+              child: Text(
+                "Таны илгээх асуудал",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: const Color.fromARGB(255, 118, 196, 247),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            Center(
+              child: Container(
+                width: 300,
                 height: 400,
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: FileImage(File(imagePath)),
+                    image: FileImage(File(widget.imagePath)),
                     fit: BoxFit.cover,
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              const SizedBox(height: 40),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  controller: mapController,
-                  decoration: const InputDecoration(
-                    labelText: 'Хаяг',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 2,
+                children: List.generate(tagNames.length, (index) {
+                  return ChoiceChip(
+                    label: Text(
+                      tagNames[index],
+                      style: TextStyle(
+                        color:
+                            selectedTags[index] ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  controller: captionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Тайлбар',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                    selected: selectedTags[index],
+                    selectedColor: Color(0xff00A3E6),
+                    backgroundColor: Colors.white,
+                    side: BorderSide(
+                      color:
+                          selectedTags[index]
+                              ? Colors.transparent
+                              : Color(0xff00A3E6),
                     ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    print('Address: ${mapController.text}');
-                    print('Caption: ${captionController.text}');
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff00A3E6),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 12,
-                    ),
+                    onSelected: (bool selected) {
+                      setState(() {
+                        selectedTags[index] = selected;
+                      });
+                    },
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
+                      borderRadius: BorderRadius.circular(30),
                     ),
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+                  );
+                }),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: TextField(
+                controller: mapController,
+                decoration: const InputDecoration(
+                  labelText: 'Хаяг',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
-                  child: const Text(
-                    'Илгээх',
-                    style: TextStyle(color: Colors.white),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue),
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 30),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: TextField(
+                controller: mapController,
+                decoration: const InputDecoration(
+                  labelText: 'Тайлбар',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue),
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  final selectedTagTexts = <String>[];
+                  for (int i = 0; i < selectedTags.length; i++) {
+                    if (selectedTags[i]) selectedTagTexts.add(tagNames[i]);
+                  }
+
+                  String address = mapController.text;
+                  String caption = captionController.text;
+                  String image = widget.imagePath;
+                  List<String> tags = selectedTagTexts;
+
+                  await DatabaseHelper.instance.insertEntry(
+                    image,
+                    address,
+                    caption,
+                    tags,
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Амжилттай хадгалагдлаа!")),
+                  );
+
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SavedEntriesScreen(),
+                    ),
+                  );
+                },
+
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xff00A3E6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                ),
+                child: const Text(
+                  'Илгээх',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
