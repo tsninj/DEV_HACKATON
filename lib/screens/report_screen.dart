@@ -40,9 +40,9 @@ class _ReportScreenState extends State<ReportScreen> {
     setState(() => _loading = true);
 
     final position = await _getLocation();
-    final storageRef = FirebaseStorage.instance
-        .ref()
-        .child('reports/${DateTime.now().millisecondsSinceEpoch}.jpg');
+    final storageRef = FirebaseStorage.instance.ref().child(
+      'reports/${DateTime.now().millisecondsSinceEpoch}.jpg',
+    );
     await storageRef.putFile(_image!);
     final imageUrl = await storageRef.getDownloadURL();
 
@@ -64,13 +64,34 @@ class _ReportScreenState extends State<ReportScreen> {
       _descController.clear();
     });
 
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Report submitted")));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Report submitted")));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Report Damage')),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12.0),
+          child: CircleAvatar(
+            backgroundImage: NetworkImage(
+              'https://t3.ftcdn.net/jpg/07/24/59/76/360_F_724597608_pmo5BsVumFcFyHJKlASG2Y2KpkkfiYUU.jpg',
+            ),
+            radius: 18,
+          ),
+        ),
+        title: const Text(
+          'Report Damage',
+          style: TextStyle(color: Colors.black),
+        ),
+        centerTitle: true, // хүсвэл төвд байрлуулах
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
