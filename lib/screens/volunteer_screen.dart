@@ -9,7 +9,9 @@ class VolunteerScreen extends StatelessWidget {
     final userId = FirebaseAuth.instance.currentUser?.uid;
     if (userId == null) return;
 
-    final docRef = FirebaseFirestore.instance.collection('volunteer_events').doc(eventId);
+    final docRef = FirebaseFirestore.instance
+        .collection('volunteer_events')
+        .doc(eventId);
     await docRef.update({
       'participants': FieldValue.arrayUnion([userId]),
     });
@@ -20,9 +22,13 @@ class VolunteerScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text('Volunteer Opportunities')),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('volunteer_events').snapshots(),
+        stream:
+            FirebaseFirestore.instance
+                .collection('volunteer_events')
+                .snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return Center(child: CircularProgressIndicator());
+          if (!snapshot.hasData)
+            return Center(child: CircularProgressIndicator());
 
           final events = snapshot.data!.docs;
 
@@ -36,7 +42,9 @@ class VolunteerScreen extends StatelessWidget {
               final data = events[index].data() as Map<String, dynamic>;
               final title = data['title'] ?? 'Untitled';
               final desc = data['description'] ?? '';
-              final participants = List<String>.from(data['participants'] ?? []);
+              final participants = List<String>.from(
+                data['participants'] ?? [],
+              );
 
               return Card(
                 margin: const EdgeInsets.all(8),
