@@ -1,21 +1,22 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'video.dart';
+import 'services/local_db.dart';
+
+late List<CameraDescription> cameras;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final cameras = await availableCameras();
-
+  cameras = await availableCameras();
   final firstCamera = cameras.first;
 
   runApp(
     MaterialApp(
       theme: ThemeData.dark(),
       home: TakePictureScreen(camera: firstCamera),
+      debugShowCheckedModeBanner: false,
     ),
   );
 }
@@ -77,9 +78,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                DisplayPictureScreen(imagePath: image.path),
+                        builder: (context) =>
+                            DisplayPictureScreen(imagePath: image.path),
                       ),
                     );
                   } catch (e) {
@@ -87,39 +87,27 @@ class TakePictureScreenState extends State<TakePictureScreen> {
                   }
                 },
                 onLongPress: () async {
-                  setState(() {
-                    _isRecording = true;
-                  });
-
+                  setState(() { _isRecording = true; });
                   try {
                     await _initializeControllerFuture;
-                    final tempDir = Directory.systemTemp;
-                    final videoPath =
-                        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.mp4';
-
                     await _controller.startVideoRecording();
                   } catch (e) {
-                    print("Error starting video recording: $e");
+                    print('Error starting video recording: $e');
                   }
                 },
                 onLongPressUp: () async {
-                  setState(() {
-                    _isRecording = false;
-                  });
-
+                  setState(() { _isRecording = false; });
                   try {
                     final video = await _controller.stopVideoRecording();
-
                     if (!context.mounted) return;
                     await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder:
-                            (context) =>
-                                DisplayVideoScreen(videoPath: video.path),
+                        builder: (context) =>
+                            DisplayVideoScreen(videoPath: video.path),
                       ),
                     );
                   } catch (e) {
-                    print("Error stopping video recording: $e");
+                    print('Error stopping video recording: $e');
                   }
                 },
                 child: Container(
@@ -150,12 +138,31 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   }
 }
 
-class DisplayPictureScreen extends StatelessWidget {
-  final TextEditingController mapController = TextEditingController();
-  final TextEditingController captionController = TextEditingController();
+class DisplayPictureScreen extends StatefulWidget {
   final String imagePath;
 
-  DisplayPictureScreen({super.key, required this.imagePath});
+  const DisplayPictureScreen({super.key, required this.imagePath});
+
+  @override
+  State<DisplayPictureScreen> createState() => _DisplayPictureScreenState();
+}
+
+class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
+  final TextEditingController mapController = TextEditingController();
+  final TextEditingController captionController = TextEditingController();
+
+  List<bool> selectedTags = List.generate(8, (index) => false);
+
+  final List<String> tagNames = [
+    'Муу усны нүх',
+    'Үер ус',
+    'Гэрэл, цахилгаан',
+    'Зам',
+    'Хог хаягдал',
+    'Ногоон байгууламж',
+    'Барилга, байгууламж',
+    'Бусад'
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -168,79 +175,118 @@ class DisplayPictureScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                height: 400,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: FileImage(File(imagePath)),
-                    fit: BoxFit.cover,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Таны илгээх асуудал",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: const Color.fromARGB(255, 118, 196, 247),
+                )),
+            const SizedBox(height: 30),
+            Container(
+              width: double.infinity,
+              height: 400,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: FileImage(File(widget.imagePath)),
+                  fit: BoxFit.cover,
                 ),
+                borderRadius: BorderRadius.circular(20),
               ),
-              const SizedBox(height: 40),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  controller: mapController,
-                  decoration: const InputDecoration(
-                    labelText: 'Хаяг',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: List.generate(tagNames.length, (index) {
+                return ChoiceChip(
+                  label: Text(
+                    tagNames[index],
+                    style: TextStyle(
+                      color: selectedTags[index] ? Colors.black : Colors.black,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: TextField(
-                  controller: captionController,
-                  decoration: const InputDecoration(
-                    labelText: 'Тайлбар',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12)),
-                    ),
+                  selected: selectedTags[index],
+                  selectedColor: const Color.fromARGB(255, 189, 211, 242),
+                  backgroundColor: Colors.white,
+                  // optional: add a border so unselected chips don't blend in
+                  side: BorderSide(
+                    color: selectedTags[index] ? Colors.transparent : Colors.grey.shade300,
                   ),
-                ),
-              ),
-
-              const SizedBox(height: 30),
-
-              Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    print('Address: ${mapController.text}');
-                    print('Caption: ${captionController.text}');
+                  onSelected: (bool sel) {
+                    setState(() => selectedTags[index] = sel);
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff00A3E6),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                  ),
-                  child: const Text(
-                    'Илгээх',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: 30),
+            TextField(
+              controller: mapController,
+              decoration: const InputDecoration(
+                labelText: 'Хаяг',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 30),
+            TextField(
+              controller: captionController,
+              decoration: const InputDecoration(
+                labelText: 'Тайлбар',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  final selectedTagTexts = <String>[];
+                  for (int i = 0; i < selectedTags.length; i++) {
+                    if (selectedTags[i]) selectedTagTexts.add(tagNames[i]);
+                  }
+                  await ReportDatabase.insertReport(
+                    imagePath: widget.imagePath,
+                    address: mapController.text,
+                    caption: captionController.text,
+                    tags: selectedTagTexts,
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Амжилттай хадгалагдлаа')),
+                  );
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 133, 198, 242),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                ),
+                child: const Text('Илгээх', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class DisplayVideoScreen extends StatelessWidget {
+  final String videoPath;
+
+  const DisplayVideoScreen({super.key, required this.videoPath});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Видео')),
+      body: Center(child: Text('Видео файл: $videoPath')),
     );
   }
 }

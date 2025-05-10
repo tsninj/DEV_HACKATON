@@ -4,6 +4,7 @@ import 'package:video_player/video_player.dart';
 
 class DisplayVideoScreen extends StatefulWidget {
   final String videoPath;
+  final bool cameraOn=false;
 
   const DisplayVideoScreen({super.key, required this.videoPath});
 
