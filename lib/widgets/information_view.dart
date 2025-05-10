@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../models/info_model.dart';
 import '../provider/globalProvider.dart';
 
@@ -11,6 +12,18 @@ class InfoCard extends StatelessWidget {
   void _onTap(BuildContext context) {
     // Дэлгэрэнгүй үзэх, navigate хийх зэрэг үйлдэл
     print("Card clicked: ${data.id}");
+  }
+
+  // SHARE хийх функц
+  void _shareContent(BuildContext context) {
+    final message = '''
+📌 ${data.title ?? "Гарчиг байхгүй"}
+📝 ${data.description ?? "Тайлбар байхгүй"}
+🖼️ Зураг: ${data.image ?? "байхгүй"}
+📅 Огноо: ${data.dateRange ?? "байхгүй"}
+👁️ Үзэлт: ${data.views ?? 0}
+''';
+    Share.share(message);
   }
 
   @override
@@ -65,7 +78,10 @@ class InfoCard extends StatelessWidget {
                         ],
                       ),
                       const Spacer(),
-                      const Icon(Icons.more_vert),
+                      IconButton(
+                        icon: const Icon(Icons.more_vert),
+                        onPressed: () => _shareContent(context),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
