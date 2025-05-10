@@ -44,11 +44,11 @@ dependencies:
   share_plus: ^7.2.1
 
   shared_preferences: ^2.2.2
-  http: ^1.1.0
   dynamic_color: ^1.6.8
   json_annotation: ^4.8.1
   provider: ^6.1.2
-
+  audioplayers: ^1.1.1
+  flutter_dotenv: ^5.0.2
 
 dev_dependencies:
   flutter_test:
