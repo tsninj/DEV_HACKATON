@@ -45,7 +45,6 @@ class _TtsHomePageState extends State<TtsHomePage> {
         speed: _speed,
         pitch: _pitch,
       );
-      // Write to temp file if needed or play directly
       await _player.play(BytesSource(wav));
     } catch (e) {
       ScaffoldMessenger.of(context)
@@ -79,7 +78,6 @@ class _TtsHomePageState extends State<TtsHomePage> {
               ),
             ),
             const SizedBox(height: 16),
-            // Controls for voice, speed, pitch
             Row(
               children: [
                 const Text('Дуу хоолой:'),
