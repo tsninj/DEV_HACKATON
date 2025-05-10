@@ -185,7 +185,6 @@ class DisplayPictureScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
 
-              //  input
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: TextField(
