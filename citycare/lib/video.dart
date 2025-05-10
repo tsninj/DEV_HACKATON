@@ -6,6 +6,7 @@ import 'savedentriesscreen.dart';
 
 class DisplayVideoScreen extends StatefulWidget {
   final String videoPath;
+  final bool cameraOn=false;
 
   const DisplayVideoScreen({super.key, required this.videoPath});
 
