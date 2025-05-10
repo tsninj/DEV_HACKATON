@@ -3,15 +3,15 @@ import 'package:provider/provider.dart';
 import 'package:smartub/provider/globalProvider.dart';
 import 'report_screen.dart';
 import 'volunteer_screen.dart';
-import 'profile_screen.dart';
+import 'info_screen.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
-  
+
   final List<Widget> pages = [
     ReportScreen(),
-    const VolunteerScreen(), 
-    const ProfilePage()
+    const VolunteerScreen(),
+    const InfoScreen(),
   ];
 
   @override
@@ -27,17 +27,20 @@ class HomePage extends StatelessWidget {
             items: const [
               BottomNavigationBarItem(
                 icon: Icon(Icons.report_gmailerrorred),
-                label: 'Reports'),
+                label: 'Home',
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.volunteer_activism),
-                label: 'Volunteer'),
+                label: 'Feedback',
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
-                label: 'Profile'),
-            ]
+                label: 'Information',
+              ),
+            ],
           ),
         );
-      }
+      },
     );
   }
 }
