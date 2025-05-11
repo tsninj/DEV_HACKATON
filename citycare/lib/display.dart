@@ -168,6 +168,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const AlertDialog(
                 title: Text('Байршлыг тогтоож байна...'),
+                backgroundColor: Colors.white,
                 titleTextStyle: TextStyle(color: Colors.black),
                 content: SizedBox(
                   height: 80,
@@ -188,6 +189,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
             } else if (snapshot.hasData) {
               final pos = snapshot.data!;
               return AlertDialog(
+                backgroundColor: Colors.white,
                 title: const Text('Таны байршил'),
                 titleTextStyle: TextStyle(color: Colors.black),
                 content: Text(
