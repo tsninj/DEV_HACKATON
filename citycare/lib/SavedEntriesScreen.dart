@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import '../helpers/database_helper.dart';
 
+// Map & location imports
+import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
+import 'package:latlong2/latlong.dart';
+import 'services/location_service.dart';
+
 class PostCard extends StatefulWidget {
   final String videoPath;
-  final String location;
+  final String location; // format: "lat, lng"
   final String caption;
   final String tags;
   final String timestamp;
@@ -35,22 +41,21 @@ class _PostCardState extends State<PostCard> {
 
   void _initializeMedia() {
     final file = File(widget.videoPath);
-
     if (file.existsSync()) {
       final ext = widget.videoPath.toLowerCase();
-      if (ext.endsWith('.mp4') || ext.endsWith('.mov') || ext.endsWith('.avi')) {
+      if (ext.endsWith('.mp4') ||
+          ext.endsWith('.mov') ||
+          ext.endsWith('.avi')) {
         isVideo = true;
         _videoController = VideoPlayerController.file(file)
           ..initialize().then((_) {
-            if (mounted) {
-              setState(() {});
-            }
+            if (mounted) setState(() {});
           }).catchError((e) {
-            print("Error initializing video player: $e");
+            debugPrint("Error initializing video player: $e");
           });
       }
     } else {
-      print("⚠️ File not found: ${widget.videoPath}");
+      debugPrint("⚠️ File not found: ${widget.videoPath}");
     }
   }
 
@@ -60,31 +65,113 @@ class _PostCardState extends State<PostCard> {
     super.dispose();
   }
 
+  /// Parse the saved "lat, lng" string into LatLng
+  LatLng get _savedLatLng {
+    final parts = widget.location
+        .split(',')
+        .map((s) => double.parse(s.trim()))
+        .toList();
+    return LatLng(parts[0], parts[1]);
+  }
+
+  /// Ensure permission & show map dialog with:
+  ///  • white background
+  ///  • TileLayer
+  ///  • MarkerLayer(saved)
+  ///  • CurrentLocationLayer(live)
+  void _showMapDialog() async {
+    try {
+      // trigger permission prompt if needed
+      await LocationService().getCurrentLocation();
+    } catch (e) {
+      return showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          backgroundColor: Colors.white,
+          title: const Text('Алдаа'),
+          content: Text(e.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Хаах'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.white,
+        title: const Text('Байршлууд'),
+        titleTextStyle: TextStyle(color: Colors.black),
+        content: SizedBox(
+          width: double.maxFinite,
+          height: 300,
+          child: FlutterMap(
+            options: MapOptions(
+              center: _savedLatLng,
+              zoom: 13,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                userAgentPackageName: 'com.yourcompany.app',
+              ),
+              MarkerLayer(
+                markers: [
+                  // Saved location
+                  Marker(
+                    point: _savedLatLng,
+                    width: 40,
+                    height: 40,
+                    child: const Icon(
+                      Icons.place,
+                      color: Colors.blue,
+                      size: 30,
+                    ),
+                  ),
+                ],
+              ),
+              // Live/current device location
+              CurrentLocationLayer(),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Хаах'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<String> tagList = widget.tags
+    final tagList = widget.tags
         .split(',')
-        .map((tag) => tag.trim())
-        .where((tag) => tag.isNotEmpty)
+        .map((t) => t.trim())
+        .where((t) => t.isNotEmpty)
         .toList();
 
     return Card(
+      color: Colors.white,  // ensure card is white
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: Colors.white,
-      shadowColor: Colors.black.withOpacity(0.2),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Video or image preview
           if (isVideo && _videoController != null && _videoController!.value.isInitialized)
             Stack(
               alignment: Alignment.center,
               children: [
                 ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                   child: SizedBox(
                     height: 200,
                     width: double.infinity,
@@ -116,9 +203,7 @@ class _PostCardState extends State<PostCard> {
             )
           else if (!isVideo)
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(16),
-              ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               child: Image.file(
                 File(widget.videoPath),
                 height: 200,
@@ -128,14 +213,17 @@ class _PostCardState extends State<PostCard> {
             )
           else
             const SizedBox(
-              height: 250,
+              height: 200,
               child: Center(child: Text("⚠️ Media not found")),
             ),
+
+          // Post details
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // User & timestamp row
                 Row(
                   children: [
                     const Icon(Icons.person, size: 40, color: Colors.grey),
@@ -145,10 +233,7 @@ class _PostCardState extends State<PostCard> {
                       children: const [
                         Text(
                           "ner1",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.black,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.black),
                         ),
                         Text(
                           "mail@example.com",
@@ -163,59 +248,56 @@ class _PostCardState extends State<PostCard> {
                         const SizedBox(width: 5),
                         Text(
                           _formatDate(widget.timestamp),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       ],
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.location,
-                      style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    ),
-                  ],
-                ),
-                Text(
-                  widget.caption,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+
+                // ► Tappable location row
+                InkWell(
+                  onTap: _showMapDialog,
+                  child: Row(
+                    children: [
+                      const Icon(Icons.location_on, color: Colors.grey),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          widget.location,
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                      ),
+                      const Icon(Icons.map, size: 16, color: Colors.blue),
+                    ],
                   ),
                 ),
+
                 const SizedBox(height: 12),
+
+                // Caption
+                Text(
+                  widget.caption,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+                ),
+
+                const SizedBox(height: 12),
+
+                // Tags
                 Wrap(
                   spacing: 4,
                   children: tagList.map((tag) {
                     return TextButton(
-                      onPressed: () {
-                        print("Tag pressed: $tag");
-                      },
+                      onPressed: () {},
                       style: TextButton.styleFrom(
                         backgroundColor: const Color(0xff00A3E6),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 4,
-                        ),
-                        minimumSize: const Size(1, 1),
-                        tapTargetSize: MaterialTapTargetSize.padded,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4)
                       ),
                       child: Text(
-                        tag.trim(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
+                        tag,
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
                       ),
                     );
                   }).toList(),
@@ -238,21 +320,8 @@ class _PostCardState extends State<PostCard> {
   }
 
   String _monthName(int month) {
-    const months = [
-      '',
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
+    const months = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[month];
   }
 }
@@ -266,6 +335,7 @@ class SavedEntriesScreen extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Нийтлэлүүд'),
+        titleTextStyle: TextStyle(color: Colors.black),
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
       ),
@@ -275,11 +345,14 @@ class SavedEntriesScreen extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: const [
-                _CategoryButton(label: "Нүүр", isSelected: true),
-                _CategoryButton(label: "Улс төр"),
-                _CategoryButton(label: "Нийгэм"),
-                _CategoryButton(label: "Татвар"),
-                _CategoryButton(label: "Шүүх"),
+                _CategoryButton(label: "Бүгд", isSelected: true),
+                _CategoryButton(label: "Муу усны нүх"),
+                _CategoryButton(label: "Үед, ус"),
+                _CategoryButton(label: "Гэрэл, цахилгаан"),
+                _CategoryButton(label: "Хог хаягдал"),
+                _CategoryButton(label: "Ногоон байгууламж"),
+                _CategoryButton(label: "Барилга, байгууламж"),
+                _CategoryButton(label: "Бусад"),
               ],
             ),
           ),
@@ -332,12 +405,10 @@ class _CategoryButton extends StatelessWidget {
       style: TextButton.styleFrom(
         backgroundColor: isSelected ? const Color(0xff00A3E6) : Colors.white,
         minimumSize: const Size(5, 5),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(40),         ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
       ),
-
       child: Text(
         label,
         style: TextStyle(

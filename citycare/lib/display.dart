@@ -168,6 +168,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const AlertDialog(
                 title: Text('Байршлыг тогтоож байна...'),
+                titleTextStyle: TextStyle(color: Colors.black),
                 content: SizedBox(
                   height: 80,
                   child: Center(child: CircularProgressIndicator()),
@@ -188,6 +189,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
               final pos = snapshot.data!;
               return AlertDialog(
                 title: const Text('Таны байршил'),
+                titleTextStyle: TextStyle(color: Colors.black),
                 content: Text(
                   'Өргөрөг: ${pos.latitude}\nУртраг: ${pos.longitude}',
                 ),
@@ -301,6 +303,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
                   Expanded(
                     child: TextField(
                       controller: mapController,
+                      style: TextStyle(color: Colors.black),
                       readOnly: true,
                       decoration: const InputDecoration(
                         labelText: 'Хаяг',
@@ -335,6 +338,7 @@ class _DisplayPictureScreenState extends State<DisplayPictureScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               child: TextField(
+                style: TextStyle(color: Colors.black),
                 controller: captionController,
                 decoration: const InputDecoration(
                   labelText: 'Тайлбар',
