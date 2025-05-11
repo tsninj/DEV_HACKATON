@@ -77,9 +77,21 @@ class _InfoScreenState extends State<InfoScreen> {
 
   Future<void> _speakAll(List<InfoModel> items) async {
     if (items.isEmpty) return;
-    final text = "Хотын утааг бууруулах санал. Хотын утааг бууруулах хөтөлбөрийн санал ирүүлнэ үү";
+    final text = items.map((i) => i.title).join('. ');
+    String sanitizeText(String text) {
+      text = text.replaceAll(RegExp(r'[^\x20-\x7E\u0400-\u04FF\u0E00-\u0E7F\u1200-\u137F\u4E00-\u9FFF\uAC00-\uD7AF\u0900-\u097F]'), '');
+      final sentences = text.split(RegExp(r'(?<=[.?!])\s+'));
+      return sentences.map((s) {
+        final clean = s.replaceAllMapped(RegExp(r'\b[A-Z]{3,}\b'), (m) => m.group(0)!.toLowerCase());
+        return clean.isNotEmpty
+            ? clean[0].toUpperCase() + clean.substring(1).toLowerCase()
+            : '';
+      }).join('. ');
+    }
+    String sanitizedText = text.replaceAll(RegExp(r'\b[A-Z]{3,}\b'), '(товчлол)');
+    print('Sanitized TTS text: $sanitizedText');
     try {
-      Uint8List wav = await ChimegeService.synthesizeSpeech(text);
+      Uint8List wav = await ChimegeService.synthesizeSpeech(sanitizedText);
       await _player.play(BytesSource(wav));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
