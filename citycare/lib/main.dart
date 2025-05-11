@@ -1,18 +1,22 @@
-import 'dart:async';
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'display.dart';
-
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  final cameras = await availableCameras();
-  final firstCamera = cameras.first;
-
+import 'package:provider/provider.dart';
+import '../providers/globalProvider.dart';
+import 'screens/homePage.dart';
+ 
+void main() {
   runApp(
-    MaterialApp(
-      theme: ThemeData.dark(),
-      home: TakePictureScreen(camera: firstCamera),
-      debugShowCheckedModeBanner: false,
+    ChangeNotifierProvider(
+      create: (context) => Global_provider(),
+      child: const MyApp(),
     ),
   );
+}
+ 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+ 
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(theme: ThemeData(useMaterial3: false), home: HomePage());
+  }
 }

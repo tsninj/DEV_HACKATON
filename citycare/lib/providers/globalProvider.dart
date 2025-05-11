@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-
+import '../models/info_model.dart';
+import '../models/report_model.dart';
+import '../models/user_model.dart';
+ 
 class Global_provider extends ChangeNotifier {
   List<ReportModel> reports = [];
   List<InfoModel> infos = [];
   User? currentUser;
   int currentIdx = 0;
-
+ 
   void setInfos(List<InfoModel> data) {
     infos = data;
     notifyListeners();
   }
-
+ 
   // Бараа бүрийн тоо ширхэгийг хадгалах Map
   final Map<int?, int> _quantities = {};
   String? _token;
@@ -19,10 +22,10 @@ class Global_provider extends ChangeNotifier {
     _token = token;
     notifyListeners();
   }
-
+ 
   bool get isLoggedIn => currentUser != null;
   // Нийт үнийг тооцоолох
-
+ 
   // API-аас авах бүтээгдэхүүнийг products-д оноох
   // Сагснаас устгах
   Future<void> removeFromCart(ReportModel product) async {
@@ -31,18 +34,18 @@ class Global_provider extends ChangeNotifier {
     }
     notifyListeners();
   }
-
+ 
   // Сагсыг цэвэрлэх
   Future<void> clearCart() async {
     _quantities.clear();
     notifyListeners();
   }
-
+ 
   void login(User user) {
     currentUser = user;
     notifyListeners();
   }
-
+ 
   void logout() {
     currentUser = null;
     _token = null;
@@ -50,7 +53,7 @@ class Global_provider extends ChangeNotifier {
     _quantities.clear();
     notifyListeners();
   }
-
+ 
   void changeCurrentIdx(int idx) {
     // Bottom navigation bar-ын идэвхтэй tab-ыг солих
     currentIdx = idx;

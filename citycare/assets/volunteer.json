@@ -1,0 +1,38 @@
+[
+    {
+  "name": "Марафон",
+  "photo": "assets/maraphon.jpg",
+  "description": "'Дугуйтай Улаанбаатар-20250' олон нийтийн өдөрлөг",
+  "icon": "calendar_today",
+  "date": "05.10-05.11"
+},
+{
+  "name": "Бүх нийтийн цэвэрлэгээ",
+  "photo": "assets/tseverlgeee.jpeg",
+  "description": "Бүх нийтийн их цэвэрлэгээ 14 хоног үргэлжилнэ",
+  "icon": "calendar_today",
+  "date": "03.22–04.12"
+},
+{
+  "name": "Мод тарих",
+  "photo": "assets/mod.jpeg",
+  "description": "“Тэрбум мод” үндэсний хөдөлгөөн нь 2030 он гэхэд тэрбумаар тоологдох мод тарина",
+  "icon": "calendar_today",
+  "date": "05.25"
+},
+{
+  "name": "Марафон",
+  "photo": "assets/guilt.jpeg",
+  "description": "'Улаанбаатар Марафон 2025'-ын бүртгэл эхэллээ",
+  "icon": "calendar_today",
+  "date": "05.24"
+},
+    {
+  "name": "Витаминжуулалт",
+  "photo": "assets/guilt.jpeg",
+  "description": "'Витаминжуулалтын аян' 2025-ыг орон даяар бүх салбараар эхлүүллээ",
+  "icon": "calendar_today",
+  "date": "05.24"
+}
+]
+

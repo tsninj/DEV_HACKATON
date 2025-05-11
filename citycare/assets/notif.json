@@ -1,0 +1,38 @@
+[
+    {
+      "name": "Zolboo",
+      "avatar": "assets/zurag1.jpg",
+      "message": "таны илгээсэн асуудлыг шийдсэн.",
+      "highlight": true,
+      "timeAgo": "1 цагийн өмнө"
+    },
+    {
+      "name": "Tsetsgee",
+      "avatar": "assets/zurag2.jpg",
+      "message": "НДШ-ийн хувь хэмжээг бууруулах санал. 80,000 гарын үсэг зурагдлаа.",
+      "highlight": false,
+      "timeAgo": "5 өдрийн өмнө"
+    },
+        {
+      "name": "Dulmaa",
+      "avatar": "assets/zurag4.jpg",
+      "message": "МОНГОЛ УЛСЫН НУТАГ ДЭВСГЭР ДЭЭР УРАНЫГ ХАЙХ, ОЛБОРЛОХЫГ ХОРИГЛОХ ТУХАЙ саналд 50,000 гарын үсэг зурагдлаа.",
+      "highlight": false,
+      "timeAgo": "21 өдрийн өмнө"
+    },
+        {
+      "name": "Bayaraa",
+      "avatar": "assets/zurag3.jpg",
+      "message": "Цалинтай ээжийн мөнгийн ихэсгэх саналд 50,000 гарын үсэг зурагдлаа ",
+      "highlight": false,
+      "timeAgo": "1 сарын өмнө"
+    },
+        {
+      "name": "Tsetsgee",
+      "avatar": "assets/zurag2.jpg",
+      "message": "НӨАТ-ийн буцаан олголтыг 2 хувиас 5 хувь болгох саналд 100,000 гарын үсэг зурагдлаа.",
+      "highlight": false,
+      "timeAgo": "2 сарын өмнө"
+    }
+  ]
+  

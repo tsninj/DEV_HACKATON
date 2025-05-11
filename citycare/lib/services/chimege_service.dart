@@ -26,7 +26,7 @@ class ChimegeService {
     int sampleRate   = 22050,
   }) async {
     // Read token at runtime, after dotenv.load()
-    final token = dotenv.env['CHIMEGE_API'];
+    final token = "b348da69ab1d588377948de8d7c590aa4a5911a5c89962f7f4739413fe652fa0";
     if (token == null || token.isEmpty) {
       throw Exception('CHIMEGE_API_TOKEN is not set. Did you load .env?');
     }
