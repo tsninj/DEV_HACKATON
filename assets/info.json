@@ -1,0 +1,68 @@
+[
+  {
+    "id": "1",
+    "username": "Bayrmaa",
+    "timeAgo": "10 цагийн өмнө",
+    "tag": "Нийгэм",
+    "title": "НДШ-ийн хувь хэмжээг бууруулах санал",
+    "description": "Нийгмийн даатгалын шимтгэл/НДШ/-ийн хувь хэмжээг бууруулах саналыг та энэ постны доор тоон гарын үсгээр өгч дэмжээрэй.",
+    "image": "https://cdn.newspress.mn/60661-1000-600.2.jpg",
+    "dateRange": "05.01 - 05.30",
+    "views": 83221
+  },
+  {
+    "id": "2",
+    "username": "Burmaa",
+    "timeAgo": "1 өдрийн өмнө",
+    "tag": "Эрүүл мэнд",
+    "title": "Эрүүл мэндийн үйлчилгээний чанар",
+    "description": "Эрүүл мэндийн үйлчилгээний чанарыг сайжруулах санал хүлээж байна.",
+    "image": "https://moh.gov.mn/uploads/content_picture/e4551dd17754e935b817363df8d55c16c0f8efd1.jpg",
+    "dateRange": "04.15 - 05.15",
+    "views": 54678
+  },
+  {
+    "id": "3",
+    "username": "Boldoo",
+    "timeAgo": "3 өдрийн өмнө",
+    "tag": "Нийгэм",
+    "title": "Хотын утааг бууруулах санал",
+    "description": "Хотын утааг бууруулах хөтөлбөрийн санал ирүүлнэ үү.",
+    "image":"https://content.ikon.mn/news/2023/3/22/oq2434___x974.jpg",
+    "dateRange": "05.01 - 06.01",
+    "views": 9271
+  },
+  {
+    "id": "4",
+    "username": "Bayrmaa",
+    "timeAgo": "7 цагийн өмнө",
+    "tag": "Нийгэм",
+    "title": "Олон нийтийн аюулгүй байдал",
+    "description": "Олон нийтийн аюулгүй байдлыг хангах санал авч байна.",
+    "image": "https://www.montsame.mn/uploads/content/3c91e102e6ce3e44beaa2dc32fa70493.png",
+    "dateRange": "05.05 - 05.25",
+    "views": 30452
+  },
+  {
+    "id": "5",
+    "username": "Bayrmaa",
+    "timeAgo": "5 өдрийн өмнө",
+    "tag": "Нийгэм",
+    "title": "Тээврийн үйлчилгээний хяналт",
+    "description": "Тээврийн үйлчилгээний хяналтыг сайжруулах санал.",
+    "image": "https://resource4.sodonsolution.org/unen/image/2023/05/08/ox786l302v05euw6/%D0%9D%D0%B8%D0%B9%D1%82%D0%B8%D0%B9%D0%BD%20%D1%82%D1%8D%D1%8D%D0%B2%D1%80%D0%B8%D0%B9%D0%BD%20%D0%BE%D1%80%D0%BB%D0%BE%D0%B3%D0%BE%20%D0%B1%D2%AF%D1%80%D0%B4%D2%AF%D2%AF%D0%BB%D1%8D%D0%BB%D1%82%D1%8D%D0%B4%20%D1%82%D0%B0%D0%B2%D0%B8%D1%85%20%D1%85%D1%8F%D0%BD%D0%B0%D0%BB%D1%82%D1%8B%D0%B3%20%D1%81%D0%B0%D0%B9%D0%B6%D1%80%D1%83%D1%83%D0%BB%D0%BD%D0%B0.jpg",
+    "dateRange": "05.10 - 06.10",
+    "views": 19834
+  },
+  {
+    "id": "6",
+    "username": "Bayrmaa",
+    "timeAgo": "2 цагийн өмнө",
+    "tag": "Боловсрол",
+    "title": "Боловсролын чанар",
+    "description": "Боловсролын чанарыг дээшлүүлэх санаачилгыг дэмжээрэй.",
+    "image": "https://content.ikon.mn/news/2014/5/7/6e9c65_50_x974.jpg",
+    "dateRange": "05.01 - 05.30",
+    "views": 68921
+  }
+]
