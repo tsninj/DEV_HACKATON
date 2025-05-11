@@ -154,7 +154,6 @@ class _InfoScreenState extends State<InfoScreen> {
           ),
           body: Column(
             children: [
-              // Filter row
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -177,7 +176,6 @@ class _InfoScreenState extends State<InfoScreen> {
                   children: filtered.map((info) => InfoCard(data: info)).toList(),
                 ),
               ),
-              // Single button to speak all
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 child: ElevatedButton.icon(
