@@ -110,7 +110,6 @@ class _InfoScreenState extends State<InfoScreen> {
         }
         final all = snapshot.data!;
         final filtered = all.where((i) => selectedFilter == 'Бүгд' || i.tag == selectedFilter).toList();
-
         return Scaffold(
           backgroundColor: const Color(0xFFF6F6F6),
           appBar: AppBar(
