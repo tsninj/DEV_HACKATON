@@ -12,6 +12,7 @@ import '../providers/globalProvider.dart';
 import '../services/chimege_service.dart';
 import '../widgets/information_view.dart';
 import 'notif_screen.dart';
+import 'report_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -113,20 +114,40 @@ class _InfoScreenState extends State<InfoScreen> {
         return Scaffold(
           backgroundColor: const Color(0xFFF6F6F6),
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: const Color(0xFFF6F6F6),
             elevation: 0,
-            title: const Text('Мэдээлэл', style: TextStyle(color: Colors.black)),
             iconTheme: const IconThemeData(color: Colors.black),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const VolunteerCardScreen()),
+                    );
+                  },
+                  child: Image.asset(
+                    'assets/logo.png',
+                    height: 70,
+                  ),
+                ),
+              ],
+            ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_none, size: 30),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const NotificationScreen()),
+              Padding(
+                padding: const EdgeInsets.only(right: 12.0),
+                child: IconButton(
+                  icon: const Icon(Icons.notifications_none, size: 30),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const NotificationScreen()),
+                  ),
                 ),
               ),
             ],
-          ),
+          ), 
           endDrawer: Drawer(
             backgroundColor: const Color(0xFFF6F6F6),
             child: user == null
@@ -151,21 +172,41 @@ class _InfoScreenState extends State<InfoScreen> {
                     ],
                   ),
           ),
-          body: Column(
+          body: Container(
+            color: const Color(0xFFF6F6F6),
+            padding: const EdgeInsets.all(10),
+             child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Filter row
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: ['Бүгд', 'Улс төр', 'Нийгэм', 'Эрүүл мэнд', 'Боловсрол']
-                      .map((f) => Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: ChoiceChip(
-                              label: Text(f),
-                              selected: f == selectedFilter,
-                              onSelected: (_) => setState(() => selectedFilter = f),
-                            ),
-                          ))
-                      .toList(),
+                      .map((filter) {
+                            bool isSelected = filter == selectedFilter;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 10),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    selectedFilter = filter;
+                                  });
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      isSelected
+                                          ? Colors.blue
+                                          : Colors.transparent,
+                                  foregroundColor:
+                                      isSelected ? Colors.white : Colors.black,
+                                  elevation: 0,
+                                  side: BorderSide.none,
+                                ),
+                                child: Text(filter),
+                              ),
+                            );
+                          }).toList(),
                 ),
               ),
               // Content list
@@ -185,7 +226,7 @@ class _InfoScreenState extends State<InfoScreen> {
                 ),
               ),
             ],
-          ),
+          ),),
         );
       },
     );

@@ -9,12 +9,13 @@ import '../screens/info_screen.dart';
 import '../display.dart';
 import 'post_sceen.dart';
 import '../SavedEntriesScreen.dart';
+import 'report_screen.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
 
   final List<Widget> pages = [
-    // const VolunteerCardScreen(),
+    const VolunteerCardScreen(),
     const PostScreen(),
     const SavedEntriesScreen(),
     const InfoScreen(),
@@ -44,6 +45,10 @@ class HomePage extends StatelessWidget {
               }
             },
             items: const [
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home, size: 35, color: Colors.white),
+                label: '',
+              ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.feed_outlined, size: 35, color: Colors.white),
                 label: '',

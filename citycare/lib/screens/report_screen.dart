@@ -85,13 +85,25 @@ Future<void> loadFilteredData() async {
                 ],
               ),
       ),
-      appBar: AppBar(
+appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color(0xFFF6F6F6),
-              elevation: 0,
-              title: Image.asset('assets/logo.png', height: 70),
+        elevation: 0,
+        title: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const VolunteerCardScreen()),
+            );                
+          },
+          child: Image.asset(
+            'assets/logo.png',
+            height: 70,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none, size: 35),
+            icon: const Icon(Icons.notifications_none, size: 35, color: Colors.black),
             onPressed: () {
               Navigator.push(
                 context,
@@ -114,7 +126,7 @@ Future<void> loadFilteredData() async {
             ),
           ),
         ],
-      ),
+      ), 
       body: Container(
         color: const Color(0xFFF6F6F6),
         padding: const EdgeInsets.all(16),

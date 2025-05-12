@@ -8,6 +8,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:latlong2/latlong.dart';
 import '../services/location_service.dart';
+import 'notif_screen.dart';
+import 'report_screen.dart';
 
 class PostCard extends StatefulWidget {
   final String videoPath;
@@ -334,10 +336,39 @@ class PostScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Нийтлэлүүд'),
-        titleTextStyle: TextStyle(color: Colors.black),
-        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
+        backgroundColor: const Color(0xFFF6F6F6),
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const VolunteerCardScreen()),
+                );
+              },
+              child: Image.asset(
+                'assets/logo.png',
+                height: 70,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: IconButton(
+              icon: const Icon(Icons.notifications_none, size: 30),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationScreen()),
+              ),
+            ),
+          ),
+        ],
       ),
       body: Column(
         children: [
